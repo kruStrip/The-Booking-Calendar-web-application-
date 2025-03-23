@@ -1,0 +1,42 @@
+1. Project Description
+ Title: Booking Calendar
+ Platform: Web application optimized for mobile devices.
+ Description: The Booking Calendar is a web application for displaying service appointments. It allows users to add, delete, and search for bookings. Future plans include integration with AmoCRM, so that deals from the CRM are automatically converted into calendar bookings. The project is inspired by services such as SimpleBook.me, Yclients, Easy Week, and Google Calendar.
+ Primary Use Case: The application is intended for service providers and their clients. It offers convenient booking management with options to search, edit, and delete entries. The main focus is on mobile usage.
+
+2. Technology Stack
+ Frontend:
+React for building the user interface.
+ Backend:
+CrowCpp (C++) for handling requests and managing the API.
+ Database:
+MariaDB.
+ Future Integration:
+API integration with AmoCRM for automatic creation of bookings based on CRM deals.
+
+3. Core Features
+ Adding Bookings:
+Ability to create new bookings specifying the service type, date, time, and client contact information.
+ Deleting Bookings:
+Deletion of existing bookings with confirmation to prevent accidental actions.
+ Searching Bookings:
+Ability to search by client name, service type, and date.
+ Future Feature:
+Integration with AmoCRM for automatic booking creation from deals.
+
+4. User Scenario
+ Viewing the Calendar:
+The user opens the app and sees a list of bookings for the current day.
+ Adding a Booking:
+The user enters booking details and saves the entry.
+ Deleting a Booking:
+The user selects a booking and confirms its deletion.
+ Searching for a Booking:
+The user enters a query in the search bar to filter results.
+
+5. Design and Usability
+Mobile optimization.
+Clean and minimalist interface.
+Simple interaction with the system.
+Scalability and potential for adding new features in the future.
+This document outlines the core principles and key functionality of the web application.

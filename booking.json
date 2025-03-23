@@ -1,0 +1,9 @@
+{
+  "description": "Массаж спины",
+  "price": "3500.00",
+  "service_id": 1,
+  "date": "2025-03-23",
+  "start_time": "14:00:00",
+  "end_time": "15:00:00",
+  "color": "#FF69B4"
+}
