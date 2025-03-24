@@ -24,7 +24,7 @@ std::string urlDecode(const std::string &value) {
     return decoded.str();
 }
 
-std::string timepoint_to_string(const std::chrono::system_clock::time_point& tp, const std::string& format = "%Y-%m-%d %H:%M:%S") {
+std::string timepoint_to_string(const std::chrono::system_clock::time_point& tp, const std::string& format) {
     std::time_t t = std::chrono::system_clock::to_time_t(tp);
     std::tm tm = *std::localtime(&t);
     std::ostringstream oss;
@@ -128,9 +128,9 @@ bool insert_booking(const Booking& booking) {
     std::cerr << "Price: " << booking.price << std::endl;
     std::cerr << "Service ID: " << booking.service_id << std::endl;
     std::cerr << "Client ID: " << booking.client_id << std::endl;
-    std::cerr << "Date: " << timepoint_to_string(booking.date) << std::endl;
-    std::cerr << "Start Time: " << timepoint_to_string(booking.start_time) << std::endl;
-    std::cerr << "End Time: " << timepoint_to_string(booking.end_time) << std::endl;
+    std::cerr << "Date: " << timepoint_to_string(booking.date, "%Y-%m-%d %H:%M:%S") << std::endl;
+    std::cerr << "Start Time: " << timepoint_to_string(booking.start_time, "%Y-%m-%d %H:%M:%S") << std::endl;
+    std::cerr << "End Time: " << timepoint_to_string(booking.end_time, "%Y-%m-%d %H:%M:%S") << std::endl;
     std::cerr << "Created By: " << booking.created_by << std::endl;
     std::cerr << "Updated By: " << booking.updated_by << std::endl;
     std::cerr << "Color: " << booking.color << std::endl;
@@ -268,5 +268,90 @@ std::vector<Booking> search_booking_by_service_name(const std::string& service_n
     mysql_free_result(res);
     mysql_close(conn);
     std::cerr << "Search completed. Total bookings found: " << results.size() << std::endl;
+    return results;
+}
+
+std::vector<Booking> get_bookings_by_date(const std::string& date) {
+    std::vector<Booking> results;
+    MYSQL* conn = get_db();
+    if (!conn) {
+        std::cerr << "Failed to connect to database" << std::endl;
+        return results;
+    }
+
+    std::stringstream query;
+    query << "SELECT event_id, description, price, service_id, client_id, "
+          << "date, start_time, end_time, created_at, updated_at, "
+          << "created_by, updated_by, color, amocrm_lead_id "
+          << "FROM bookings WHERE DATE(date) = '" << date << "'";
+    
+    std::cerr << "Executing query: " << query.str() << std::endl;
+
+    if (mysql_query(conn, query.str().c_str())) {
+        std::cerr << "Failed to fetch bookings: " << mysql_error(conn) << std::endl;
+        mysql_close(conn);
+        return results;
+    }
+
+    MYSQL_RES* res = mysql_store_result(conn);
+    if (!res) {
+        std::cerr << "Failed to store result: " << mysql_error(conn) << std::endl;
+        mysql_close(conn);
+        return results;
+    }
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res))) {
+        Booking b;
+        if (row[0]) b.event_id = std::stoi(row[0]);
+        if (row[1]) b.description = row[1];
+        if (row[2]) b.price = std::stod(row[2]);
+        if (row[3]) b.service_id = std::stoi(row[3]);
+        if (row[4]) b.client_id = std::stoi(row[4]);
+
+        // Парсинг даты
+        if (row[5]) {
+            std::tm tm = {};
+            std::istringstream(row[5]) >> std::get_time(&tm, "%Y-%m-%d");
+            b.date = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+        }
+
+        // Парсинг времени начала
+        if (row[6]) {
+            std::tm tm = {};
+            std::istringstream(row[6]) >> std::get_time(&tm, "%H:%M:%S");
+            b.start_time = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+        }
+
+        // Парсинг времени окончания
+        if (row[7]) {
+            std::tm tm = {};
+            std::istringstream(row[7]) >> std::get_time(&tm, "%H:%M:%S");
+            b.end_time = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+        }
+
+        if (row[8]) {
+            std::tm tm = {};
+            std::istringstream(row[8]) >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+            b.created_at = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+        }
+
+        if (row[9]) {
+            std::tm tm = {};
+            std::istringstream(row[9]) >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+            b.updated_at = std::chrono::system_clock::from_time_t(std::mktime(&tm));
+        }
+
+        if (row[10]) b.created_by = std::stoi(row[10]);
+        if (row[11]) b.updated_by = std::stoi(row[11]);
+        if (row[12]) b.color = row[12];
+        else b.color = "#FF69B4"; // Используем розовый цвет по умолчанию
+        if (row[13]) b.amocrm_lead_id = std::stoi(row[13]);
+
+        results.push_back(b);
+    }
+
+    mysql_free_result(res);
+    mysql_close(conn);
     return results;
 }
