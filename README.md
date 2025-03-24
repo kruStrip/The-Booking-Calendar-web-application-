@@ -1,24 +1,51 @@
-# Corax Template
+# Calendaric
 
-This is a Template to create Crow applications.
+A modern booking calendar application built with React, Vite, and TypeScript.
 
-## Requirements:
+## Features
 
-- Boost 1.8x
-- CrowCpp v.1.0+
-- Cmake 3.10+
+- Modern UI with Tailwind CSS
+- Mobile-first design
+- Calendar view with time slots
+- Room management
+- Booking management
+- Future integration with AmoCRM
 
-## How to setup
+## Tech Stack
 
-Install all the dependencies using your preferred package Manager, if you are using Mac OS, you can use `brew` to install `boost` and `cmake`.
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS
+- Radix UI Components
 
-- `mkdir libs && cd libs`
-- Clone The CrowCpp Repo: `git clone https://github.com/CrowCpp/Crow.git`
-- `cd ..`
+## Getting Started
 
-## How to compile and run corax
+1. Install dependencies:
+```bash
+npm install
+```
 
-- `mkdir build`
-- `cd scripts && ./make.sh`
-- `./compile.sh`
-- `cd ../release/bin/ && ./corax`
+2. Start development server:
+```bash
+npm run start
+```
+
+3. Build for production:
+```bash
+npm run build
+```
+
+## Project Structure
+
+```
+src/
+  ├── components/     # Reusable UI components
+  ├── screens/       # Page components
+  ├── lib/          # Utility functions
+  └── interf/       # Interface components
+```
+
+## License
+
+MIT
