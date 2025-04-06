@@ -2,6 +2,7 @@ set(SRC_FILES
     main.cpp
     models/booking.cpp
     models/service.cpp
+    models/client.cpp
 )
 
 set(HEADER_DIR

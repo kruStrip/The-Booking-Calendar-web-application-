@@ -36,13 +36,24 @@ public:
 
                 Booking booking;
                 try {
-                    booking.description = x["description"].s();
-                    booking.price = std::stod(x["price"].s());
-                    booking.service_id = std::stoi(x["service_id"].s());
-                    if (x.has("client_id") && x["client_id"].s().size() > 0) {
-                        booking.client_id = std::stoi(x["client_id"].s());
-                    }
-                    
+                    try {
+                        std::string priceStr = x["price"].s();
+                        booking.price = priceStr.empty() ? 0.0 : std::stod(priceStr);
+
+                        std::string serviceStr = x["service_id"].s();
+                        booking.service_id = serviceStr.empty() ? 0 : std::stoi(serviceStr);
+
+                        std::string clientStr = x["client_id"].s();
+                        booking.client_id = clientStr.empty() ? 0 : std::stoi(clientStr);
+
+                    std::cout << "Parsed price, service_id, client_id OK" << std::endl;
+                } 
+                catch (const std::exception& e) {
+                    std::cerr << "Error parsing numeric fields: " << e.what() << std::endl;
+                    auto res = crow::response(400, std::string("Invalid data: ") + e.what());
+                    add_cors_headers(res);
+                    return res;
+                }
                     // Parse date and times
                     std::string date = x["date"].s();
                     std::string start_time = x["start_time"].s();
